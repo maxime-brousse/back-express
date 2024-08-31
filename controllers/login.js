@@ -1,19 +1,22 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const transporter = require('../mailer/transporter')
+const validateUserSignUp = require('../validation/validationUserSignIn');
 
 module.exports = function(app, pool) {
     // Méthode de login
     app.post('/login', (req, res) => {
       const { mail, password } = req.body;
-  
+
       if (!mail || !password) {
         return res.status(400).send('Email et mot de passe sont requis');
       }
-  
+      if(!validateUserSignUp({ mail, password })) {
+        return res.status(400).send('l\'utilisateur doit avoir être valide');
+      }
+
       const sql = 'SELECT * FROM utilisateur WHERE mail = ?';
-      
+
       // Utilisation du pool pour faire une requête à la base de données
       const query = pool.query(sql, [mail], (err, results) => {
         if (err) {

@@ -1,7 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const transporter = require('../mailer/transporter')
+const transporter = require('../mailer/transporter');
+const validateUserSignUp = require('../validation/validationUserSignUp');
 
 module.exports = function(app, pool) {
   // Méthode de sign up
@@ -10,6 +11,9 @@ module.exports = function(app, pool) {
 
     if (!mail || !password || !pseudonyme) {
       return res.status(400).send('Email, pseudonyme et mot de passe sont requis');
+    }
+    if(!validateUserSignUp({ mail, password, pseudonyme })) {
+      return res.status(400).send('l\'utilisateur doit avoir être valide');
     }
 
     // Vérifier si l'utilisateur existe déjà
