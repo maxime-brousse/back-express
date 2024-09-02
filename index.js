@@ -95,6 +95,21 @@ require("./users/userDelete")(app, pool, authenticateToken);
 
 
 // CRUD TOURNAMENT ADMIN
+app.get("/tournament/:id", authenticateToken, (req, res) => {
+  const sql = "SELECT * FROM tournoi t WHERE t.idTournoi = ?";
+
+  pool.query(sql, [req.params.id], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération des utilisateurs:", err);
+      return res.status(500).send("Erreur du serveur");
+    }
+    res.json(results);
+  });
+});
+
+require("./tournament/tournamentCreate")(app, pool, authenticateToken);
+require("./tournament/tournamentModify")(app, pool, authenticateToken);
+require("./tournament/tournamentDelete")(app, pool, authenticateToken);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
