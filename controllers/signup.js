@@ -52,7 +52,7 @@ module.exports = function(app, pool) {
 
           // Création du token JWT
           const token = jwt.sign(
-            { userPseudonyme: result.pseudonyme, isAdmin: result.isAdmin ? 1 : 0 },
+            { mail: result.mail, isAdmin: result.isAdmin ? 1 : 0 },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN }
           );

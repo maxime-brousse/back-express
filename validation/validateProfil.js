@@ -1,4 +1,6 @@
-module.exports = function validateUserSignUp(user) {
+const containsSQL = require('./SQL/containsSQL');
+
+module.exports = function validateUser(user) {
     const { mail, password, pseudonyme } = user;
 
     const isMailValid = typeof mail === 'string' && !containsSQL(mail);

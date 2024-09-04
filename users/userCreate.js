@@ -7,6 +7,10 @@ module.exports = function(app, pool, authenticateToken) {
     app.post('/users/create', authenticateToken, (req, res) => {
         const { mail, password, pseudonyme, isAdmin, point } = req.body;
 
+        if(!req.user.isAdmin) {
+            return res.status(403).send("route interdite");
+        }
+
         if (!mail || !password || !pseudonyme) {
         return res.status(400).send('Email, pseudonyme et mot de passe sont requis');
         }

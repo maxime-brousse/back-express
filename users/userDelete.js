@@ -7,6 +7,10 @@ module.exports = function(app, pool, authenticateToken) {
     app.delete('/user/:id', authenticateToken, (req, res) => {
         const { id } = req.params;
 
+        if(!req.user.isAdmin) {
+            return res.status(403).send("route interdite");
+        }
+
         // Vérifier si l'utilisateur existe, déjà
         const checkUserSql = 'SELECT * FROM utilisateur WHERE idUtilisateur = ?';
         pool.query(checkUserSql, [id], (err, results) => {

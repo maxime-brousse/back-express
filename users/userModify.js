@@ -8,11 +8,14 @@ module.exports = function(app, pool, authenticateToken) {
         const { mail, password, pseudonyme, isAdmin, point } = req.body;
         const { id } = req.params;
 
+        if(!req.user.isAdmin) {
+            return res.status(403).send("route interdite");
+        }
         if (!mail || !password || !pseudonyme) {
-        return res.status(400).send('Email, pseudonyme et mot de passe sont requis');
+            return res.status(400).send('Email, pseudonyme et mot de passe sont requis');
         }
         if(!validateUser({ mail, password, pseudonyme, isAdmin, point })) {
-        return res.status(400).send('l\'utilisateur doit avoir être valide');
+            return res.status(400).send('l\'utilisateur doit avoir être valide');
         }
 
         // Vérifier si l'utilisateur existe déjà

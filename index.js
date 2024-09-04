@@ -67,6 +67,10 @@ const validateUser = require("./validation/validateUser");
 app.get("/users", authenticateToken, (req, res) => {
   const sql = "SELECT u.idUtilisateur,u.mail, u.pseudonyme, u.point, u.isAdmin FROM utilisateur u";
 
+  if(!req.user.isAdmin) {
+      return res.status(403).send("route interdite");
+  }
+
   pool.query(sql, (err, results) => {
     if (err) {
       console.error("Erreur lors de la récupération des utilisateurs:", err);
@@ -79,6 +83,10 @@ app.get("/users", authenticateToken, (req, res) => {
 app.get("/user/:id", authenticateToken, (req, res) => {
   const sql = "SELECT u.idUtilisateur, u.mail, u.pseudonyme, u.point, u.isAdmin FROM utilisateur u WHERE u.idUtilisateur = ?";
 
+  if(!req.user.isAdmin) {
+    return res.status(403).send("route interdite");
+  }
+
   pool.query(sql, [req.params.id], (err, results) => {
     if (err) {
       console.error("Erreur lors de la récupération des utilisateurs:", err);
@@ -88,15 +96,32 @@ app.get("/user/:id", authenticateToken, (req, res) => {
   });
 });
 
+//récupération donnés profil
+app.get("/profil", authenticateToken, (req, res) => {
+    const sql = "SELECT u.mail, u.pseudonyme FROM utilisateur u WHERE u.mail = ?";
+
+    pool.query(sql, [req.user.mail], (err, results) => {
+        if (err) {
+          console.error("Erreur lors de la récupération des utilisateurs:", err);
+          return res.status(500).send("Erreur du serveur");
+        }
+        res.json(results);
+    });
+});
+
+require("./users/profilModify")(app, pool, authenticateToken);
+
 require("./users/userCreate")(app, pool, authenticateToken);
 require("./users/userModify")(app, pool, authenticateToken);
 require("./users/userDelete")(app, pool, authenticateToken);
-//todo : vérifier les datas
-
 
 // CRUD TOURNAMENT ADMIN
 app.get("/tournament/:id", authenticateToken, (req, res) => {
   const sql = "SELECT * FROM tournoi t WHERE t.idTournoi = ?";
+
+  if(!req.user.isAdmin) {
+    return res.status(403).send("route interdite");
+  }
 
   pool.query(sql, [req.params.id], (err, results) => {
     if (err) {

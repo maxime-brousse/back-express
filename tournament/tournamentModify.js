@@ -9,6 +9,9 @@ module.exports = function(app, pool, authenticateToken) {
         const { id } = req.params;
         const integerId = parseInt(id);
 
+        if(!req.user.isAdmin) {
+            return res.status(403).send("route interdite");
+        }
         if (!jeux || !dateTournoi || !titreTournoi || !récompensePoint) {
             return res.status(400).send('jeux, dateTournoi, titreTournoi et récompensePoint sont requis');
         }
