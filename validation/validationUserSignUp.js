@@ -1,3 +1,5 @@
+const containsSQL = require('./SQL/containsSQL');
+
 module.exports = function validateUserSignUp(user) {
     const { mail, password, pseudonyme } = user;
 

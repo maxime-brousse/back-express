@@ -135,6 +135,7 @@ app.get("/tournament/:id", authenticateToken, (req, res) => {
 require("./tournament/tournamentCreate")(app, pool, authenticateToken);
 require("./tournament/tournamentModify")(app, pool, authenticateToken);
 require("./tournament/tournamentDelete")(app, pool, authenticateToken);
+require("./tournament/tournamentInscription")(app, pool, authenticateToken);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

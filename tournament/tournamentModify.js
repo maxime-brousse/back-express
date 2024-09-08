@@ -4,7 +4,7 @@ const validateId = require('../validation/validateId');
 
 module.exports = function(app, pool, authenticateToken) {
     app.put('/tournament/modify/:id', authenticateToken, (req, res) => {
-        const { jeux, dateTournoi, descriptionTournoi, récompensePoint, isSolo, titreTournoi } = req.body;
+        const { jeux, dateTournoi, descriptionTournoi, récompensePoint, isSolo, titreTournoi, nbJoueursMax } = req.body;
         const formatedDateTournoi = new Date(dateTournoi);
         const { id } = req.params;
         const integerId = parseInt(id);
@@ -15,7 +15,7 @@ module.exports = function(app, pool, authenticateToken) {
         if (!jeux || !dateTournoi || !titreTournoi || !récompensePoint) {
             return res.status(400).send('jeux, dateTournoi, titreTournoi et récompensePoint sont requis');
         }
-        if(!validateTournament({ jeux, formatedDateTournoi, descriptionTournoi, récompensePoint, isSolo, titreTournoi })) {
+        if(!validateTournament({ jeux, formatedDateTournoi, descriptionTournoi, récompensePoint, isSolo, titreTournoi, nbJoueursMax })) {
             return res.status(400).send('le tournoi doit avoir être valide');
         }
         if(!validateId(integerId)) {
@@ -31,11 +31,12 @@ module.exports = function(app, pool, authenticateToken) {
             descriptionTournoi = ?,
             récompensePoint = ?,
             isSolo = ?,
-            titreTournoi = ?
+            titreTournoi = ?,
+            nbJoueursMax = ?
             WHERE idTournoi = ?;
         `;
 
-        const query = pool.query(modifyTournoiSql, [jeux, formatedDateTournoi, descriptionTournoi, récompensePoint, isSolo, titreTournoi, integerId], (err, result) => {
+        const query = pool.query(modifyTournoiSql, [jeux, formatedDateTournoi, descriptionTournoi, récompensePoint, isSolo, titreTournoi, nbJoueursMax, integerId], (err, result) => {
             if (err) {
                 console.error('Erreur lors de la modification de l\'utilisateur:', err);
                 return res.status(500).send('Erreur du serveur');
